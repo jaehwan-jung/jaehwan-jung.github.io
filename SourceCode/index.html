@@ -7,6 +7,11 @@
     <meta name="author" content=" FILL ME IN ">
     <title>Cameron Pittman: Portfolio</title>
 
+      /*
+      Inlined style.css in order to avoid blocking css. This would normally be not ideal because
+      the css is not reusable in other html files. However, for the purpose of demonstrating an
+      optimization method, I inlined the whole content in style.css here.
+      */
     <style>
         html {
             font-size: 100%;
@@ -51,6 +56,11 @@
             border-top: 1px solid #ccc;
         }
         footer span { float: right; font-style: italic; }
+
+        /*
+        Originally, web fonts were used. By avoiding web APIs to download font files and saving them locally,
+        a little bit of speed gain is achieved.
+        */
 
         /* Smartphones (portrait) */
         @media only screen and (max-width: 480px) {
@@ -183,6 +193,10 @@
       ga('create', 'UA-XXXX-Y');
       ga('send', 'pageview');
     </script>
+
+      /*
+      Since it's not critical that analytics.js is loaded up front, async is used to asynchronously load it.
+      */
     <script async src="http://www.google-analytics.com/analytics.js"></script>
     <script async src="js/perfmatters.js"></script>
   </head>
@@ -218,6 +232,10 @@
             <p>Making mobile apps isn't so hard after all.</p>
           </li>
 
+            /*
+            Originally, pizzeria.jpg was used. It was however unnecessarily big for index.html.
+            So pizzeria_100.jpg, which is a resized version of pizzeria.jpg, is used to speed up loading and to avoid resizing.
+            */
           <li>
             <img style="width: 100px;" src="views/images/pizzeria_100.jpg">
             <a href="views/pizza.html">Cam's Pizzeria</a>
