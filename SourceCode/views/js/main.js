@@ -561,37 +561,63 @@ window.addEventListener('scroll', function() {
  Used document fragment to append elements (pizzas) in a single call to avoid multiple layouts.
  Also used translate3d to put each moving pizza on a new layer.
  */
-document.addEventListener('DOMContentLoaded', function () {
-  var phaseArray = getPhaseArray();
-  var fragment = document.createDocumentFragment();
+document.addEventListener('DOMContentLoaded', addMovingPizzas);
 
-  function CloneAndAppendNewPizzaElement(pizzaElement, i) {
+function addMovingPizzas() {
+    var phaseArray = getPhaseArray();
+    var fragment = document.createDocumentFragment();
     var cols = 8;
     var s = 256;
+    function CloneAndAppendNewPizzaElement(pizzaElement, i) {
 
-    var clonedPizza = pizzaElement.cloneNode(true);
-    var basicLeft = (i % cols) * s;
-    clonedPizza.basicLeft = basicLeft;
-    clonedPizza.style.top = (Math.floor(i / cols) * s) + 'px';
-    clonedPizza.style.left = basicLeft + phaseArray[i % PHASE_COUNT] + 'px';
 
-    fragment.appendChild(clonedPizza);
-  }
+        var clonedPizza = pizzaElement.cloneNode(true);
+        var basicLeft = (i % cols) * s;
+        clonedPizza.basicLeft = basicLeft;
+        clonedPizza.style.top = (Math.floor(i / cols) * s) + 'px';
+        clonedPizza.style.left = basicLeft + phaseArray[i % PHASE_COUNT] + 'px';
 
-  var pizzaElement = document.createElement('img');
-  pizzaElement.className = 'mover';
-  pizzaElement.src = "images/pizza.png";
-  pizzaElement.style.height = "100px";
-  pizzaElement.style.width = "73.333px";
-  pizzaElement.style.transform = "translate3d(0,0,0)";
+        fragment.appendChild(clonedPizza);
+    }
+
+    var pizzaElement = document.createElement('img');
+    pizzaElement.className = 'mover';
+    pizzaElement.src = "images/pizza.png";
+    pizzaElement.style.height = "100px";
+    pizzaElement.style.width = "73.333px";
+    pizzaElement.style.transform = "translate3d(0,0,0)";
 
     /*
-     Reduced the number of moving pizzas to 32, which is enough for most cases
+        Calculates a number of pizzas required to fill the page.
+        The calculation is not optimized and therefore doesn't calculate the absolute
+        minimum number of pizzas. Regardless of the width, it will assume the same
+        number of columns. The number of rows required is calculated using innerHeight.
      */
-  for (var i = 0; i < 32; i++) {
-      CloneAndAppendNewPizzaElement(pizzaElement, i);
-  }
+    var frameHeight = window.innerHeight;
+    var pizzaCount = cols * Math.ceil(frameHeight/s);
 
-  var firstMovingPizza = document.getElementById("movingPizzas1");
-  firstMovingPizza.appendChild(fragment);
-});
+    for (var i = 0; i < pizzaCount; i++) {
+        CloneAndAppendNewPizzaElement(pizzaElement, i);
+    }
+
+    var firstMovingPizza = document.getElementById("movingPizzas1");
+    firstMovingPizza.appendChild(fragment);
+}
+
+/*
+   This event handler removes all moving pizzas when the frame is resized and then recalculate
+   the number of pizzas required.
+ */
+window.addEventListener('resize', resetAllMovingPizzas);
+
+function resetAllMovingPizzas(){
+    removeAllMovingPizzas();
+    addMovingPizzas();
+}
+
+function removeAllMovingPizzas(){
+    var firstMovingPizza = document.getElementById("movingPizzas1");
+    while (firstMovingPizza.firstChild) {
+        firstMovingPizza.removeChild(firstMovingPizza.firstChild);
+    }
+}
